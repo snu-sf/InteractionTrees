@@ -10,6 +10,7 @@ env:
   - OCAML_VERSION=4.07 COQ_VERSION="8.8.2"
   - OCAML_VERSION=4.07 COQ_VERSION="8.9.0"
   - OCAML_VERSION=4.07 COQ_VERSION="8.10.2"
+  - OCAML_VERSION=4.07 COQ_VERSION="dev"
 os:
   - linux
     # - osx
@@ -31,7 +32,8 @@ install:
 - eval $(opam config env)
 - opam repo add coq-released https://coq.inria.fr/opam/released
 - opam repo add coq-extra-dev https://coq.inria.fr/opam/extra-dev
-- opam pin add coq $COQ_VERSION
+- if [ "$COQ_VERSION" == "dev" ] ; then opam repo add coq-core-dev https://coq.inria.fr/opam/core-dev ; fi
+- opam pin add coq -k version $COQ_VERSION
 - opam pin add coq-itree --kind=path . -n  # Make opam aware of our dependency constraints
 - opam install coq-itree --deps-only -v
 - opam list
