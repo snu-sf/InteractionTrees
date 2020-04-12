@@ -332,6 +332,7 @@ Definition memory    := alist addr value.
     do a bit of post-processing to swap the order of the "state components"
     introduced by the interpretation.
 *)
+Set Printing Implicit. 
 Definition interp_asm {E A} (t : itree (Reg +' Memory +' E) A) :
   memory -> registers -> itree E (memory * (registers * A)) :=
   let h := bimap h_reg (bimap h_memory (id_ _)) in

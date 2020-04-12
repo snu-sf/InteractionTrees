@@ -53,6 +53,7 @@ Definition fmap_branch {A B : Type} (f: A -> B): branch A -> branch B :=
     match b with
     | Bjmp a => Bjmp (f a)
     | Bbrz c a a' => Bbrz c (f a) (f a')
+    | Bret v => Bret v
     | Bhalt => Bhalt
     end.
 
@@ -185,7 +186,8 @@ Section Correctness.
 
   Lemma fmap_block_map:
     forall  {L L'} b (f: fin L -> fin L'),
-      denote_bk (fmap_block f b) ≅ ITree.map f (denote_bk b).
+      denote_bk (fmap_block f b) ≅
+       ITree.map (bimap (@id_ value _ id) f) (denote_bk b).
   Proof.
     (* Induction over the structure of the [block b] *)
     induction b as [i b | br]; intros f.
@@ -203,7 +205,18 @@ Section Correctness.
         intros ?.
         flatten_goal; rewrite map_ret; reflexivity.
       + rewrite (itree_eta (ITree.map _ _)).
-        cbn. apply eqit_Vis. intros [].
+        cbn. unfold subevent, resum.
+        unfold ITree.trigger.
+        rewrite bind_vis; eapply eqit_Vis.
+        intros [].
+        * rewrite 3 bind_ret_l. cbn.
+          unfold cat, Cat_Fun, inl_, sum_inl, id_, id.
+          apply eqit_Ret. reflexivity.
+        * rewrite 3 bind_ret_l. cbn.
+          unfold cat, Cat_Fun, inl_, sum_inl, id_, id.
+          apply eqit_Ret. reflexivity.
+      + rewrite (itree_eta (ITree.map _ _)).
+        cbn. eapply eqit_Vis. intros [].
   Qed.
 
   (** Denotes a list of instruction by binding the resulting trees. *)
