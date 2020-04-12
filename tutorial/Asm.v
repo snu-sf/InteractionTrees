@@ -191,40 +191,26 @@ Section Denote.
         trigger (Store addr val)
       end.
 
-    (* Selective Applicative Functor. *)
-    Class Selective (m : Type -> Type) `{Monad m} : Type :=
-      {
-        select : forall {A B : Type}, m (sum A B) -> m (A -> B) -> m B
-      }.
-
-    Definition selectM (m : Type -> Type) `{Monad m} :=
-      fun (A B : Type) (mab : m (sum A B)) (mf : m (A -> B)) =>
-        e <- mab ;;
-          match e with
-          | inl a => Functor.fmap (fun f => f a) mf
-          | inr b => ret b
-          end.
-
-    Instance selective_ITree : Selective (itree E) :=
-      {| select := selectM (itree E) |}.
-
     (** A [branch] returns the computed label whose set of possible values [B]
         is carried by the type of the branch.  If the computation halts
         instead of branching, we return the [exit] tree.  *)
-    Definition denote_br {B} (b : branch B) : itree E (reg + B) :=
+    Definition denote_br {B} (b : branch B) : itree E (value + B) :=
       match b with
       | Bjmp l => ret (inr l)
       | Bbrz v y n =>
         val <- trigger (GetReg v) ;;
         if val:nat then ret (inr y) else ret (inr n)
-      | Bret r => ret (inl r)
+      | Bret r =>
+        val <- trigger (GetReg r) ;;
+            ret (inl val)
       | Bhalt => exit
       end.
+
 
     (** The denotation of a basic [block] shares the same type, returning the
         [label] of the next [block] it shall jump to.  It recursively denote
         its instruction before that.  *)
-    Fixpoint denote_bk {B} (b : block B) : itree E (reg + B) :=
+    Fixpoint denote_bk {B} (b : block B) : itree E (value + B) :=
       match b with
       | bbi i b =>
         denote_instr i ;; denote_bk b
@@ -232,10 +218,8 @@ Section Denote.
         denote_br b
       end.
 
-    Notation call_fn B := (itree E (reg -> B)).
-
-    Definition denote_fn {B} (b : block B) (fn : call_fn B) : itree E B :=
-      select (denote_bk b) fn.
+    Definition val_ktree (E : Type -> Type) {A B : Type} :=
+      A -> itree E (value + B).
 
     (** A labelled collection of blocks, [bks], is simply the pointwise
         application of [denote_bk].  Crucially, its denotation is therefore
@@ -248,9 +232,8 @@ Section Denote.
         They have a nice algebraic structure, supported by the library,
         including a [loop] combinator that we can use to link collections of
         basic blocks. (See below.) *)
-    Definition denote_bks {A B : nat} (fn : call_fn (fin B)) (bs: bks A B)
-      : sub (ktree E) fin A B :=
-      fun a => denote_fn (bs a) fn.
+    Definition denote_bks {A B : nat} (bs: bks A B): sub (@val_ktree E) fin A B :=
+      fun a => denote_bk (bs a).
 
   (** One can think of an [asm] program as a circuit/diagram where wires
       correspond to jumps/program links.  [denote_bks] computes the meaning of
@@ -262,9 +245,26 @@ Section Denote.
       accomplish this with the same [loop] combinator we used to denote _Imp_'s
       [while] loop.  It directly takes our [denote_bks (code s): ktree E (I + A)
       (I + B)] and hides [I] as desired.  *)
-    Definition denote_asm {A B} (s : asm A B) (fn : call_fn (fin (internal s + B))):
-      sub (ktree E) fin A B :=
-      loop (denote_bks fn (code s)).
+    Instance Id_val_ktree : Id_ (sub (@val_ktree E) fin).
+    Admitted.
+
+    Instance Cat_val_ktree : Cat (sub (@val_ktree E) fin).
+    Admitted.
+
+    Instance Case_val_ktree : Case (sub (@val_ktree E) fin) Init.Nat.add.
+    Admitted.
+
+    Instance Inl_val_ktree : Inl (sub (@val_ktree E) fin) Init.Nat.add.
+    Admitted.
+
+    Instance Inr_val_ktree : Inr (sub (@val_ktree E) fin) Init.Nat.add.
+    Admitted.
+
+    Instance Iter_foo : Iter (sub (@val_ktree E) fin) Init.Nat.add.
+    Admitted.
+
+    Definition denote_asm {A B} (s : asm A B) : sub (@val_ktree E) fin A B :=
+      loop (denote_bks (code s)).
 
   End with_event.
 End Denote.
