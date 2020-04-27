@@ -48,7 +48,7 @@ Section EqmRRel.
     {
     (* [eqmR] should transport elementary structures of the relation [R] *)
     (* Question: should it transport anti-symmetry? *)
-
+      eqmR_transport_refl :> forall {A} (R : relationH A A), Reflexive R -> Reflexive (eqmR R);
       eqmR_transport_symm :>  forall {A} (R : relationH A A), Symmetric R  -> Symmetric (eqmR R);
       eqmR_transport_trans :> forall {A} (R : relationH A A), Transitive R -> Transitive (eqmR R);
 
@@ -77,14 +77,13 @@ End EqmRRel.
        equivalence relation *)
 (* In particular, well-formedness of [eqmR] recovers that [eqm] is an equivalence relationH *)
 
-(* 
+
 
 Global Instance eqm_equiv (m:Type -> Type) `{EqmR m} `{EqmR_OK m}
   : forall A, Equivalence (@eqm m _ A).
 Proof.
   unfold eqm; split; typeclasses eauto.
 Defined.
-*)
 
 Section EqmRMonad.
   Context (m : Type -> Type).

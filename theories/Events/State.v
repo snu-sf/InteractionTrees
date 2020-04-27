@@ -123,17 +123,31 @@ Section MayRet.
       apply IHHm1.
   Qed.
 
-  (* IY: This isn't quite the right type.. Doesn't really make sense, since
-     get and put return different types.
-   *)
+  Lemma ret_pure:
+    forall A (x : A) (m : Type -> Type) `{Monad m} `{EqmR m} `{EqmR_OK m}, ~ (impure (ret (m := m) x)).
+  Proof.
+    intros. unfold not, impure, not.
+    intros. apply H3. exists x. reflexivity.
+  Qed.
+
+
+  (* Lemma impure_bind: *)
+  (*   forall ma, impure ma -> eqm ma (bind mb k). *)
+
   Lemma atomic_ma_eqmR :
-    forall ma, atomic ma -> ma ≈ get \/ exists (x : S), ma ≈ put x.
+    forall (ma : itree E S), atomic ma ->
+          exists (f : S -> S), ma ≈ Functor.fmap f get \/
+          exists (f : unit -> S) (x : S), ma ≈ Functor.fmap f (put x).
   Proof.
     intros * HA.
-    destruct HA as (HA & HI).
+    destruct HA as (HA & HI). unfold impure, not in HI.
+
+    exists id. cbn. unfold ITree.map, id.
+    setoid_rewrite bind_ret_r.
     unfold impure, not in HI.
     unfold get, put, embed, Embeddable_itree, Embeddable_forall, embed, trigger.
     unfold not in HA.
+    (* exists id. cbn. unfold ITree.map. *)
   Admitted.
 
 End MayRet.

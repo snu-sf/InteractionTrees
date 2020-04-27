@@ -427,14 +427,3 @@ Section State.
   Qed.
 
 End State.
-
-Section A.
-
-  Lemma impure_get :
-    impure 
-  impure (get)
-  impure (set 3)
-  atomic (get)
-  atomic ma -> eqmR eq ma (get) \/ exists x, eqmR ma (set x)
-
-End A.
