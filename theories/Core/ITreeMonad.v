@@ -10,6 +10,8 @@ From ITree Require Import
      Eq.Eq
      Eq.UpToTaus.
 
+Set Universe Polymorphism.
+
 Instance EqM_ITree {E} : EqM (itree E) := fun a => eutt eq.
 
 Instance EqMProps_ITree {E} : EqMProps (itree E).

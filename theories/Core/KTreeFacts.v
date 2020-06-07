@@ -27,6 +27,8 @@ Import CatNotations.
 Local Open Scope itree.
 (* end hide *)
 
+Set Universe Polymorphism.
+
 (** ** [ITree.aloop] *)
 
 Lemma bind_iter {E A B C} (f : A -> itree E (A + B)) (g : B -> itree E (B + C))

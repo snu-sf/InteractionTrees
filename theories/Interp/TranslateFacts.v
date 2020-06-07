@@ -27,6 +27,8 @@ From Coq Require Import
      RelationClasses.
 (* end hide *)
 
+Set Universe Polymorphism.
+
 Section TranslateFacts.
   Context {E F : Type -> Type}.
   Context {R : Type}.

@@ -35,6 +35,8 @@ From ITree Require Import
 Import ITreeNotations.
 (* end hide *)
 
+Set Universe Polymorphism.
+
 Instance Equivalence_eq_Handler {E F : Type -> Type}
   : Equivalence (@eq_Handler E F).
 Proof.
