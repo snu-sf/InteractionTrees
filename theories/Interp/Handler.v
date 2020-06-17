@@ -88,6 +88,11 @@ End Handler.
 
 Definition Handler (E F : Type -> Type) := E ~> itree F.
 
+(** An explicit conversion between [~>] and [Handler] to help type inference.
+    Alternatively, use the [Handler] module. *)
+Definition handle {E F : Type -> Type} (f : E ~> itree F)
+  := Handler E F.
+
 Definition eq_Handler {E F : Type -> Type}
   : Handler E F -> Handler E F -> Prop
   := i_pointwise (fun R => eq_itree eq).
