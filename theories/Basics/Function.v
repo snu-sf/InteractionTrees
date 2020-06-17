@@ -8,6 +8,7 @@ From ITree Require Import
      Basics.Basics
      Basics.CategoryOps.
 
+Set Universe Polymorphism.
 Import CatNotations.
 Local Open Scope cat_scope.
 (* end hide *)
