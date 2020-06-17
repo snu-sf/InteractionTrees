@@ -12,7 +12,6 @@ From Coq Require Import
 From ExtLib Require Import
      Structures.Functor
      Structures.Monad
-     Data.Monads.StateMonad
      Data.Monads.ReaderMonad
      Data.Monads.OptionMonad
      Data.Monads.EitherMonad.
@@ -152,18 +151,6 @@ Polymorphic Class MonadIter (M : Type -> Type) : Type :=
 
     Quite easily in fact, no [Monad] assumption needed.
  *)
-
-Instance MonadIter_stateT {M S} {MM : Monad M} {AM : MonadIter M}
-  : MonadIter (stateT S M) :=
-  fun _ _ step i => mkStateT (fun s =>
-    iter (fun is =>
-      let i := fst is in
-      let s := snd is in
-      is' <- runStateT (step i) s ;;
-      ret match fst is' with
-          | inl i' => inl (i', snd is')
-          | inr r => inr (r, snd is')
-          end) (i, s)).
 
 Polymorphic Instance MonadIter_stateT0 {M S} {MM : Monad M} {AM : MonadIter M}
   : MonadIter (Monads.stateT S M) :=
