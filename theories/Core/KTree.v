@@ -21,6 +21,8 @@ From Coq Require Import
      Morphisms.
 (* end hide *)
 
+Set Universe Polymorphism.
+
 Implicit Types E : Type -> Type.
 Implicit Types a b : Type.
 

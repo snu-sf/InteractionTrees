@@ -214,7 +214,7 @@ Definition map {E R S} (f : R -> S)  (t : itree E R) : itree E S :=
   bind t (fun x => Ret (f x)).
 
 (** Atomic itrees triggering a single event. *)
-Definition trigger {E : Type -> Type} : E ~> itree E :=
+Polymorphic Definition trigger {E : Type -> Type} : E ~> itree E :=
   fun R e => Vis e (fun x => Ret x).
 
 (** Ignore the result of a tree. *)
