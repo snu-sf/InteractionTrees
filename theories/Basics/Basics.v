@@ -12,9 +12,7 @@ From Coq Require Import
 From ExtLib Require Import
      Structures.Functor
      Structures.Monad
-     Data.Monads.ReaderMonad
-     Data.Monads.OptionMonad
-     Data.Monads.EitherMonad.
+.
 
 Import MonadNotation.
 Local Open Scope monad.
@@ -163,32 +161,6 @@ Polymorphic Instance MonadIter_stateT0 {M S} {MM : Monad M} {AM : MonadIter M}
           | inl i' => inl (fst si', i')
           | inr r => inr (fst si', r)
           end) (s, i).
-
-Instance MonadIter_readerT {M S} {AM : MonadIter M} : MonadIter (readerT S M) :=
-  fun _ _ step i => mkReaderT (fun s =>
-    iter (fun i => runReaderT (step i) s) i).
-
-Instance MonadIter_optionT {M} {MM : Monad M} {AM : MonadIter M}
-  : MonadIter (optionT M) :=
-  fun _ _ step i => mkOptionT (
-    iter (fun i =>
-      oi <- unOptionT (step i) ;;
-      ret match oi with
-          | None => inr None
-          | Some (inl i) => inl i
-          | Some (inr r) => inr (Some r)
-          end) i).
-
-Instance MonadIter_eitherT {M E} {MM : Monad M} {AM : MonadIter M}
-  : MonadIter (eitherT E M) :=
-  fun _ _ step i => mkEitherT (
-    iter (fun i =>
-      ei <- unEitherT (step i) ;;
-      ret match ei with
-          | inl e => inr (inl e)
-          | inr (inl i) => inl i
-          | inr (inr r) => inr (inr r)
-          end) i).
 
 (** And the nondeterminism monad [_ -> Prop] also has one. *)
 
