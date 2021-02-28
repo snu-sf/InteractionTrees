@@ -209,10 +209,10 @@ Inductive interleaved
 | interleaved_Ret r : interleaved (Ret r) (Ret r)
 | interleaved_Left {U} (t : itree _ U) k1 k2 :
     (forall (x : U), interleaved (k1 x) (k2 x)) ->
-    interleaved (interp (case_ g inr_) t >>= k1) (t >>= k2)
+    interleaved (interp (handle (case_ g inr_)) t >>= k1) (t >>= k2)
 | interleaved_Right {U} (t : itree _ U) k1 k2 :
     (forall (x : U), interleaved (k1 x) (k2 x)) ->
-    interleaved (t >>= k1) (interp (case_ f inr_) t >>= k2)
+    interleaved (t >>= k1) (interp (handle (case_ f inr_)) t >>= k2)
 .
 
 Hint Constructors interleaved: core.
