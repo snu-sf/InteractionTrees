@@ -3,6 +3,7 @@
 (** The Kleisli category of ITrees. *)
 
 (* begin hide *)
+Set Universe Polymorphism.
 From Coq Require Import
      Morphisms.
 

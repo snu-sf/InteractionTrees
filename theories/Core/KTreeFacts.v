@@ -1,6 +1,7 @@
 (** * Facts about [aloop] and [loop] *)
 
 (* begin hide *)
+Set Universe Polymorphism.
 From Coq Require Import
      Classes.Morphisms
      Setoids.Setoid

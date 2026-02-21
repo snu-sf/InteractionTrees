@@ -3,6 +3,8 @@
     to define Eq1 and MonadLawsE instances too.
 *)
 
+Set Universe Polymorphism.
+
 From ITree Require Import
      Basics.Basics
      Basics.Monad

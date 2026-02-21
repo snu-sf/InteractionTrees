@@ -1,6 +1,7 @@
 (** * Theorems about [Interp.translate] *)
 
 (* begin hide *)
+Set Universe Polymorphism.
 From Coq Require Import
      Program
      Setoid

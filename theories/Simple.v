@@ -439,8 +439,7 @@ Lemma interp_recursive_call
     interp (recursive f) (call x)
   ≈ rec f x.
 Proof.
-  intros. rewrite ITree.Interp.RecursionFacts.interp_recursive_call.
-  reflexivity.
+  intros. apply ITree.Interp.RecursionFacts.interp_recursive_call.
 Qed.
 
 (** [mrec ctx] is equivalent to [interp (mrecursive ctx)],
@@ -462,8 +461,7 @@ Lemma interp_mrecursive
     interp (mrecursive ctx) (trigger_inl1 d)
   ≈ mrec ctx d.
 Proof.
-  intros; rewrite ITree.Interp.RecursionFacts.interp_mrecursive.
-  reflexivity.
+  intros; apply ITree.Interp.RecursionFacts.interp_mrecursive.
 Qed.
 
 #[global] Hint Rewrite @interp_recursive_call : itree.
